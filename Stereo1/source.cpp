@@ -8,6 +8,7 @@
 #include "Shader.h"
 #include "VertexData.h"
 #include "Constants.h"
+#include "Camera.h"
 
 int SCREEN_WIDTH = 800;
 int SCREEN_HEIGHT = 600;
@@ -51,15 +52,24 @@ void processInput(GLFWwindow* window) {
 	}
 }
 
-void createModelMatrices(Shader& shader, std::vector<glm::vec3> positions, std::vector<glm::vec3> axes) {
+void createModelMatrices(Shader& shader, std::vector<glm::vec3> positions, std::vector<glm::vec3> axes, bool rightEye) {
+
 	for (int i = 0; i < NUM_CUBES; ++i) {
 		glm::mat4 model(1.0f);
 		model = glm::translate(model, positions[i]);
 		model = glm::rotate(model, (float)glfwGetTime(), axes[i]);
 
 		shader.setUniformMatrix4float("model", model);
+
+		//if (rightEye)
+		//	glDrawBuffer(GL_BACK_RIGHT);
+		//else
+		//	glDrawBuffer(GL_BACK_LEFT);
+
+		//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDrawArrays(GL_TRIANGLES, 0, 12 * 6);
 	}
+	//glFlush();
 }
 
 void createViewMatrix(Shader& shader, float ipd, float near, bool rightEye = false) {
@@ -112,7 +122,7 @@ int main() {
 
 	//glfwWindowHint(GLFW_DECORATED, NULL); // to remove border and titlebar
 
-	//glfwWindowHint(GLFW_STEREO, GLFW_TRUE);
+	glfwWindowHint(GLFW_STEREO, GLFW_TRUE);
 
 	GLFWmonitor* monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(monitor);
@@ -136,6 +146,7 @@ int main() {
 		return -1;
 	}
 
+	// VENDOR AND RENDERER INFORMATION
 	const GLubyte* vendor = glGetString(GL_VENDOR);
 	const GLubyte* renderer = glGetString(GL_RENDERER);
 	std::cout << "vendor: " << vendor << std::endl;
@@ -167,6 +178,8 @@ int main() {
 
 	glEnable(GL_DEPTH_TEST);
 
+	// SETTING THE POSITIONS AND ROTATIONS AXES OF THE CUBES
+
 	std::random_device rd;
 	std::mt19937 engine(rd());
 	std::uniform_real_distribution<> distribution_xy(-5.0, 5.0);
@@ -180,16 +193,7 @@ int main() {
 		axes.push_back(glm::vec3(distribution_axes(engine), distribution_axes(engine), distribution_axes(engine)));
 	}
 
-	glm::mat4 view(1.0f);
-	view = glm::translate(view, glm::vec3(0.0, 0.0, -3.0f));
 
-	//glm::mat4 projection(1.0f);
-	//projection = glm::perspective(
-	//	glm::radians(45.0f),
-	//	(float)SCREEN_WIDTH / (float)SCREEN_HEIGHT,
-	//	0.1f,
-	//	100.0f
-	//);
 
 	int frame = 0;
 	float lastTime = glfwGetTime();
@@ -205,12 +209,15 @@ int main() {
 		if (frame++ % 2) {
 			createProjectionMatrix(shader, IPD, 0.5f, 100.0f, 45.0f, false);
 			createViewMatrix(shader, IPD, 0.5f, false);
+			createModelMatrices(shader, positions, axes, false);
+
 		}
 		else {
 			createProjectionMatrix(shader, IPD, 0.5f, 100.0f, 45.0f, true);
 			createViewMatrix(shader, IPD, 0.5f, true);
+			createModelMatrices(shader, positions, axes, true);
+
 		}
-		createModelMatrices(shader, positions, axes);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();

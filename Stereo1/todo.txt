@@ -1,0 +1,4 @@
+1. cam class
+2. provide options for toe in
+3. quad buffering
+4. pixel display formats

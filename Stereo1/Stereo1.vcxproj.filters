@@ -15,13 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\..\..\opengl\glad.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="source.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Shader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\OpenGL\glad.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

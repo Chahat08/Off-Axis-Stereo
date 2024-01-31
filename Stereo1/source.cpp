@@ -17,7 +17,7 @@ int CURSOR_YPOS = INT_MIN;
 
 int NUM_CUBES = 16;
 
-const float IPD = 0.001f;
+const float IPD = 0.002f;
 
 void framebuffer_resize_callback(GLFWwindow* window, int width, int height) {
 	glViewport(0, 0, width, height);
@@ -203,12 +203,12 @@ int main() {
 		glBindVertexArray(VAO);
 		//shader.setUniformMatrix4float("projection", projection);
 		if (frame++ % 2) {
-			createProjectionMatrix(shader, IPD, 0.1f, 100.0f, 45.0f, false);
-			createViewMatrix(shader, IPD, 1.0f, false);
+			createProjectionMatrix(shader, IPD, 0.5f, 100.0f, 45.0f, false);
+			createViewMatrix(shader, IPD, 0.5f, false);
 		}
 		else {
-			createProjectionMatrix(shader, IPD, 0.1f, 100.0f, 45.0f, true);
-			createViewMatrix(shader, IPD, 1.0f, true);
+			createProjectionMatrix(shader, IPD, 0.5f, 100.0f, 45.0f, true);
+			createViewMatrix(shader, IPD, 0.5f, true);
 		}
 		createModelMatrices(shader, positions, axes);
 
